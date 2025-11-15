@@ -1,351 +1,628 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <title>FieldSight – Deterministic RCA for OEM Support Teams</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FieldSight AI — Deterministic Diagnostics for the Field</title>
-  <meta name="description" content="FieldSight AI turns messy field evidence into deterministic, auditable Root Cause Analysis and customer-ready reports. Built for FSM platforms, OEM service divisions, and industrial operators." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta
+    name="description"
+    content="FieldSight is a deterministic RCA accelerator for OEM technical support teams, transforming messy field notes and emails into structured, expert-grade root-cause analysis drafts."
+  />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="FieldSight – Deterministic RCA for OEM Support Teams" />
+  <meta property="og:description" content="Turn messy field notes into structured, expert-grade RCA drafts in seconds." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fieldsight.tech" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
   <style>
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; }
-    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)); backdrop-filter: blur(10px); }
-    .badge { border: 1px solid rgba(255,255,255,0.2); }
+    :root {
+      --bg-main: #020617;
+      --bg-alt: #0b1120;
+      --border-subtle: #1e293b;
+      --text-main: #e5e7eb;
+      --text-muted: #94a3b8;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.08);
+      --accent-secondary: #0ea5e9;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --card-border: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 40%, #000 100%);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--accent-secondary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 1.5rem 1.5rem 0.5rem;
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #22c55e 0, #0f172a 60%, #020617 100%);
+      border: 1px solid #22c55e33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .logo-mark::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid #22c55e88;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      font-size: 1.1rem;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.75rem;
+      color: var(--text-muted);
+      background-color: rgba(15, 23, 42, 0.7);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem 1.5rem 3rem;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-heading {
+      font-size: clamp(2.1rem, 3vw, 2.8rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .hero-highlight {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      max-width: 30rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 0.7rem 1.4rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      color: #022c22;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 0 0 1px #22c55e33, 0 12px 30px rgba(22, 163, 74, 0.25);
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      padding: 0.65rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      background-color: rgba(15, 23, 42, 0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .hero-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hero-panel {
+      background: var(--card-bg);
+      border-radius: 1.25rem;
+      border: 1px solid var(--card-border);
+      padding: 1.4rem 1.4rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .hero-panel-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .ess-row {
+      margin-top: 0.5rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .ess-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .ess-bar {
+      position: relative;
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #020617;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .ess-fill {
+      position: absolute;
+      inset: 0;
+      width: 72%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0ea5e9, var(--accent));
+      transition: width 0.3s ease-out;
+    }
+
+    .ess-badge {
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .ticket-snippet {
+      border-radius: 0.9rem;
+      border: 1px solid var(--border-subtle);
+      padding: 0.9rem;
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 60%);
+      margin-bottom: 0.7rem;
+    }
+
+    .ticket-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .ticket-body {
+      font-size: 0.8rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .rca-snippet {
+      margin-top: 0.8rem;
+      padding-top: 0.7rem;
+      border-top: 1px dashed var(--border-subtle);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .rca-snippet strong {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .badge-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.7rem;
+      font-size: 0.72rem;
+    }
+
+    .badge-chip {
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      background-color: rgba(15, 23, 42, 0.85);
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent-secondary);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 38rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.2rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      border-radius: 1rem;
+      border: 1px solid var(--card-border);
+      background-color: rgba(15, 23, 42, 0.9);
+      padding: 1rem;
+      font-size: 0.86rem;
+    }
+
+    .card-title {
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-body {
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card-list {
+      margin: 0.4rem 0 0;
+      padding-left: 1rem;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .card-list li {
+      margin-bottom: 0.25rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .list-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0;
+      margin: 0.4rem 0 0;
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .list-inline li {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background-color: rgba(15, 23, 42, 0.9);
+    }
+
+    .cta-panel {
+      border-radius: 1.25rem;
+      border: 1px solid var(--card-border);
+      background: radial-gradient(circle at top right, #0ea5e926 0, #020617 60%);
+      padding: 1.4rem 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .cta-email {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--accent-secondary);
+    }
+
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 1rem 1.5rem 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem;
+      align-items: center;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100">
-  <!-- Header -->
-  <header class="fixed inset-x-0 top-0 z-50 bg-slate-950/70 backdrop-blur border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="h-16 flex items-center justify-between">
-        <a href="#top" class="flex items-center gap-2">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" class="text-sky-400"><path d="M12 3l7.794 4.5v9L12 21l-7.794-4.5v-9L12 3z" stroke="currentColor" stroke-width="1.5"/><path d="M12 7l5 3-5 3-5-3 5-3z" fill="currentColor" class="text-sky-500"/></svg>
-          <span class="font-extrabold tracking-tight text-lg">FieldSight</span>
-        </a>
-        <nav class="hidden md:flex items-center gap-8 text-sm">
-          <a href="#why" class="hover:text-white text-slate-300">Why FieldSight</a>
-          <a href="#how" class="hover:text-white text-slate-300">How it Works</a>
-          <a href="#segments" class="hover:text-white text-slate-300">Who It’s For</a>
-          <a href="#integrations" class="hover:text-white text-slate-300">Integrations</a>
-          <a href="#pilot" class="hover:text-white text-slate-300">Pilot</a>
-          <a href="#docs" class="hover:text-white text-slate-300">Docs</a>
-        </nav>
-        <div class="hidden md:flex items-center gap-3">
-          <a href="#pilot" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold">Request Pilot</a>
-        </div>
-        <button class="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-slate-700" id="menuBtn">
-          <span class="sr-only">Open menu</span>
-          <svg width="22" height="22" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
+<body>
+  <div class="page">
+    <header>
+      <div class="relative h-7 w-7"><div class="absolute inset-0 rounded-full bg-gradient-to-br from-fsaccent2 to-fsaccent border border-fsaccent/50"></div><div class="absolute inset-[3px] rounded-full bg-fsbg border border-fsaccent2/40"></div></div>
+      <div class="logo">
+        <div class="logo-text">FieldSight</div>
+        <span class="badge">Deterministic RCA Engine</span>
       </div>
-    </div>
-    <div id="mobileNav" class="md:hidden hidden border-t border-slate-800">
-      <div class="px-4 py-3 space-y-2 text-sm">
-        <a href="#why" class="block py-1">Why FieldSight</a>
-        <a href="#how" class="block py-1">How it Works</a>
-        <a href="#segments" class="block py-1">Who It’s For</a>
-        <a href="#integrations" class="block py-1">Integrations</a>
-        <a href="#pilot" class="block py-1">Pilot</a>
-        <a href="#docs" class="block py-1">Docs</a>
-      </div>
-    </div>
-  </header>
+      <a class="btn-secondary" href="https://app.fieldsight.tech">
+        Open Console
+      </a>
+    </header>
 
-  <!-- Hero -->
-  <section id="top" class="relative overflow-hidden pt-28">
-    <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-      <div class="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-sky-500/10 blur-3xl"></div>
-      <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-violet-500/10 blur-3xl"></div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <main>
+      <section class="hero">
         <div>
-          <div class="inline-flex items-center gap-2 text-xs badge rounded-full px-3 py-1 text-slate-300 mb-4">
-            <span class="inline-block h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
-            Deterministic · Auditable · API-first
-          </div>
-          <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight">
-            From messy field notes to <span class="text-sky-400">clear root cause</span> — in seconds.
+          <div class="section-label">For OEM Technical Support Teams</div>
+          <h1 class="hero-heading">
+            Deterministic <span class="hero-highlight">RCA acceleration</span>
+            for overloaded support desks.
           </h1>
-          <p class="mt-5 text-lg text-slate-300 max-w-xl">FieldSight AI turns photos, logs, and free‑form service notes into consistent, traceable diagnostics and customer‑ready reports. Less guesswork. Fewer escalations. More uptime.</p>
-          <div class="mt-8 flex flex-col sm:flex-row gap-3">
-            <a href="#pilot" class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold">Start a 30‑day Pilot</a>
-            <a href="#docs" class="px-6 py-3 rounded-xl border border-slate-700 hover:border-slate-500 text-slate-200">View API Docs</a>
+          <p class="hero-subtitle">
+            FieldSight turns messy field notes and email threads into structured,
+            expert-grade RCA drafts in seconds. It doesn’t replace your engineers —
+            it helps every tech communicate and troubleshoot like a senior.
+          </p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="mailto:tre@fieldsight.tech?subject=FieldSight%20Pilot">
+              Book a pilot conversation →
+            </a>
+            <a class="btn-secondary" href="https://app.fieldsight.tech">
+              View live demo
+            </a>
           </div>
-          <div class="mt-6 text-xs text-slate-400">Built for FSM platforms, OEM service divisions, and industrial operators.</div>
-        </div>
-        <div class="relative">
-          <div class="glass rounded-2xl border border-slate-800 p-6 shadow-2xl">
-            <div class="text-sm text-slate-300 mb-2">One‑click Diagnose</div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4 text-xs overflow-auto">
-              <pre class="text-slate-300"><code>{
-  "context_text": "AHU fan array shows low airflow after VFD swap; amps uneven between modules.",
-  "controls": { "deterministic": true }
-}</code></pre>
-            </div>
-            <div class="mt-4 text-sm text-slate-300 mb-2">Deterministic Result (ESS‑gated)</div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4 text-xs overflow-auto">
-              <pre class="text-emerald-300"><code>Top causes → 1) Blocked filter (0.83) 2) Drive under‑frequency (0.61)
-Follow‑ups → Confirm filter cleanliness; verify setpoint & RPM
-Report → PDF link generated for customer</code></pre>
-            </div>
+          <div class="hero-meta">
+            Designed for OEM support, mechanical contractors, and controls integrators
+            who need fewer escalations and more consistent RCA.
           </div>
         </div>
-      </div>
 
-      <div class="mt-14 grid sm:grid-cols-3 gap-4">
-        <div class="glass rounded-xl p-4 border border-slate-800">
-          <div class="text-2xl font-extrabold">30–50%</div>
-          <div class="text-sm text-slate-300">faster resolution in pilots</div>
-        </div>
-        <div class="glass rounded-xl p-4 border border-slate-800">
-          <div class="text-2xl font-extrabold">Level 2/3</div>
-          <div class="text-sm text-slate-300">escalations reduced with consistent RCA</div>
-        </div>
-        <div class="glass rounded-xl p-4 border border-slate-800">
-          <div class="text-2xl font-extrabold">100%</div>
-          <div class="text-sm text-slate-300">traceable: citations & ESS transparency</div>
-        </div>
-      </div>
-    </div>
-  </section>
+        <aside class="hero-panel" aria-label="Example RCA acceleration">
+          <div class="hero-panel-header">
+            <div>
+              <div class="hero-panel-title">Example Ticket</div>
+              <div class="ticket-label">RTU-4 — low airflow / hot space</div>
+            </div>
+            <span class="pill">Draft RCA in ~5 seconds</span>
+          </div>
 
-  <!-- Why -->
-  <section id="why" class="py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-12 items-start">
+          <div class="ticket-snippet">
+            <div class="ticket-label">Input — messy field notes</div>
+            <div class="ticket-body">
+              “20-ton RTU, space hot &amp; stuffy. VFD OK but fan at 0%. BMS shows 0% command
+              for 24 hrs. Found local HOA in HAND/OFF in mech room. Put back to AUTO, airflow
+              restored, temps dropping.”
+            </div>
+            <div class="rca-snippet">
+              <strong>FieldSight Output (Draft):</strong><br />
+              Symptom: loss of airflow, space overheating.<br />
+              Likely cause: local HOA switch left in OFF, not fan hardware failure.<br />
+              Classification: operator / control setting, not warranty defect.<br />
+              Customer-ready summary drafted for technician to review and send.
+            </div>
+          </div>
+
+          <div class="ess-row">
+            <div class="ess-label-row">
+              <span>Evidence Sufficiency Score (ESS)</span>
+              <span class="ess-badge">0.72 — ready for review</span>
+            </div>
+            <div class="ess-bar">
+              <div class="ess-fill"></div>
+            </div>
+          </div>
+
+          <div class="badge-strip">
+            <span class="badge-chip">Standardized RCA format</span>
+            <span class="badge-chip">Follow-up question suggestions</span>
+            <span class="badge-chip">Warranty classification hints</span>
+          </div>
+        </aside>
+      </section>
+
+      <section>
+        <div class="section-label">Why FieldSight</div>
+        <h2 class="section-title">Built for how OEM support actually works.</h2>
+        <p class="section-subtitle">
+          Your team doesn’t need another chatbot. You need a deterministic instrument
+          that structures evidence, drafts RCA, and keeps every customer-facing response
+          professional and consistent.
+        </p>
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">Standardized RCA drafts</div>
+            <div class="card-body">
+              FieldSight turns freeform technician notes into a clean, repeatable RCA structure:
+              symptoms, likely causes, corrective actions, and classification.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Evidence Sufficiency (ESS)</div>
+            <div class="card-body">
+              ESS highlights when a ticket is under-specified and suggests missing checks
+              before the case is escalated — protecting Tier-2 and Tier-3 bandwidth.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Customer-ready communication</div>
+            <div class="card-body">
+              Generate clear, professional summaries your team can send directly to building
+              engineers, facility owners, and contractors — without rewriting every email.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="two-col">
         <div>
-          <h2 class="text-3xl sm:text-4xl font-extrabold">Why FieldSight</h2>
-          <p class="mt-4 text-slate-300">Unplanned downtime is expensive. Service data is messy. Tribal knowledge is fragile. FieldSight replaces subjective troubleshooting with deterministic reasoning grounded in manuals, physics, and patterns from the field — then packages it into a customer‑ready report.</p>
-          <ul class="mt-6 space-y-3 text-slate-200">
-            <li class="flex items-start gap-3"><span class="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span><span class="font-semibold">Deterministic by design</span> — strict mode, schema‑validated outputs, ESS (Evidence Sufficiency Score) gating.</span></li>
-            <li class="flex items-start gap-3"><span class="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span><span class="font-semibold">Audit‑ready</span> — every conclusion has citations and follow‑ups for defensibility.</span></li>
-            <li class="flex items-start gap-3"><span class="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-400"></span><span><span class="font-semibold">Drop‑in where work happens</span> — embed as a widget, call the API, or use webhooks.</span></li>
-          </ul>
-        </div>
-        <div class="glass rounded-2xl border border-slate-800 p-6">
-          <h3 class="text-lg font-semibold">Measurable impact from pilots</h3>
-          <div class="mt-4 grid sm:grid-cols-2 gap-4">
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-3xl font-extrabold">↑ First‑time fix</div>
-              <p class="mt-2 text-sm text-slate-300">Less ping‑ponging between levels of support.
-              </p>
+          <div class="section-label">How it fits in</div>
+          <h2 class="section-title">A support workflow accelerator, not an answer box.</h2>
+          <p class="section-subtitle">
+            FieldSight doesn’t replace your judgment. It removes the grunt work around it:
+            reading long threads, structuring notes, and making sure nothing obvious was missed.
+          </p>
+          <div class="grid-3">
+            <div class="card">
+              <div class="card-title">1. Paste or send the ticket</div>
+              <ul class="card-list">
+                <li>Field notes</li>
+                <li>Email chains</li>
+                <li>Work orders / BMS snippets</li>
+              </ul>
             </div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-3xl font-extrabold">↓ Truck rolls</div>
-              <p class="mt-2 text-sm text-slate-300">Clear follow‑ups prevent unnecessary site visits.</p>
+            <div class="card">
+              <div class="card-title">2. Review the draft RCA</div>
+              <ul class="card-list">
+                <li>Symptoms &amp; hypotheses</li>
+                <li>ESS and missing evidence</li>
+                <li>Warranty classification hints</li>
+              </ul>
             </div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-3xl font-extrabold">↑ Customer trust</div>
-              <p class="mt-2 text-sm text-slate-300">Transparent rationale and branded reports.</p>
-            </div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-3xl font-extrabold">↓ Variability</div>
-              <p class="mt-2 text-sm text-slate-300">Consistent RCA across teams, shifts, and sites.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How it works -->
-  <section id="how" class="py-20 border-t border-slate-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-center">How it works</h2>
-      <p class="mt-3 text-center text-slate-300 max-w-2xl mx-auto">Five modular endpoints you can orchestrate or call independently.</p>
-      <div class="mt-10 grid lg:grid-cols-5 gap-4">
-        <!-- Card -->
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
-          <div class="text-sky-400 font-semibold">Interpret</div>
-          <p class="text-sm text-slate-300 mt-1">Turn free‑form notes & photos into a structured Context Frame.</p>
-          <code class="text-xs text-slate-400 mt-3 block">POST /v1/interpret</code>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
-          <div class="text-sky-400 font-semibold">Analyze</div>
-          <p class="text-sm text-slate-300 mt-1">Deterministic RCA with top hypotheses, citations, and follow‑ups.</p>
-          <code class="text-xs text-slate-400 mt-3 block">POST /v1/analyze</code>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
-          <div class="text-sky-400 font-semibold">Iterate</div>
-          <p class="text-sm text-slate-300 mt-1">Refine results as new evidence or actions are added.</p>
-          <code class="text-xs text-slate-400 mt-3 block">POST /v1/iterate</code>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
-          <div class="text-sky-400 font-semibold">Diagnose</div>
-          <p class="text-sm text-slate-300 mt-1">One‑click orchestration (interpret → analyze) with ESS gating.</p>
-          <code class="text-xs text-slate-400 mt-3 block">POST /v1/diagnose</code>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5">
-          <div class="text-sky-400 font-semibold">Report</div>
-          <p class="text-sm text-slate-300 mt-1">Generate customer‑ready, branded PDF/HTML reports.</p>
-          <code class="text-xs text-slate-400 mt-3 block">POST /v1/report</code>
-        </div>
-      </div>
-
-      <div class="mt-10 grid lg:grid-cols-2 gap-8 items-start">
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6">
-          <h3 class="font-semibold">Evidence Sufficiency System (ESS)</h3>
-          <p class="mt-2 text-slate-300">ESS enforces a data bar before declaring a root cause. If evidence is thin, FieldSight asks targeted follow‑ups or stops short of over‑confident answers.</p>
-          <ul class="mt-4 text-sm text-slate-300 space-y-2 list-disc list-inside">
-            <li>Transparent thresholds & uncertainty</li>
-            <li>Prevents “hallucinated” conclusions</li>
-            <li>Improves training & handoffs</li>
-          </ul>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6">
-          <h3 class="font-semibold">Deterministic & Observable</h3>
-          <p class="mt-2 text-slate-300">Strict mode (temperature 0), schema‑validated outputs, trace IDs, and stage‑level spans. Designed for regulated or safety‑critical environments.</p>
-          <ul class="mt-4 text-sm text-slate-300 space-y-2 list-disc list-inside">
-            <li>p95 latency under 3s, 99.9% uptime</li>
-            <li>Versioned schemas, backwards‑compatible</li>
-            <li>Role‑based API keys & presigned artifacts</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Segments / ICPs -->
-  <section id="segments" class="py-20 border-t border-slate-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-center">Built for teams where downtime hurts</h2>
-      <p class="mt-3 text-center text-slate-300 max-w-3xl mx-auto">Early adopters share three traits: urgent RCA needs, digital readiness (FSM/CMMS in place), and complex troubleshooting workflows.</p>
-
-      <div class="mt-10 grid lg:grid-cols-3 gap-6">
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6">
-          <h3 class="font-semibold text-sky-300">FSM platform customers</h3>
-          <p class="mt-2 text-slate-300">Large enterprises in telecom, energy, manufacturing, and construction already running FSM apps. Embed FieldSight into existing ticket flows to boost first‑time fix.</p>
-          <ul class="mt-3 text-sm text-slate-400 list-disc list-inside">
-            <li>High downtime cost, large field teams</li>
-            <li>Mobile notes, IoT logs, cloud workflows</li>
-          </ul>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6">
-          <h3 class="font-semibold text-sky-300">OEM service divisions</h3>
-          <p class="mt-2 text-slate-300">Aftermarket service orgs for complex equipment (pumps, turbines, medical, elevators). Consistency, warranty reduction, and auditability out of the box.</p>
-          <ul class="mt-3 text-sm text-slate-400 list-disc list-inside">
-            <li>Deep manuals, multi‑level support</li>
-            <li>Specialize FieldSight to your assets</li>
-          </ul>
-        </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6">
-          <h3 class="font-semibold text-sky-300">Industrial operators & FM</h3>
-          <p class="mt-2 text-slate-300">Facilities with critical HVAC, power, or process systems (plants, hospitals, data centers). Convert photos & alarms into action and reduce outages.</p>
-          <ul class="mt-3 text-sm text-slate-400 list-disc list-inside">
-            <li>CMMS/IWMS in place</li>
-            <li>Safety & compliance pressure</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="mt-10 text-center">
-        <a href="#pilot" class="inline-flex items-center px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold">See if you qualify for the pilot</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Integrations -->
-  <section id="integrations" class="py-20 border-t border-slate-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-12 items-start">
-        <div>
-          <h2 class="text-3xl sm:text-4xl font-extrabold">Integrate in hours, not months</h2>
-          <p class="mt-4 text-slate-300">Drop‑in UI, direct API calls, or webhook automation. Start with the orchestrated <span class="font-semibold">/v1/diagnose</span> endpoint, then render branded reports with <span class="font-semibold">/v1/report</span>.</p>
-          <div class="mt-6 grid sm:grid-cols-2 gap-4">
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-sm font-semibold">Widget</div>
-              <p class="text-sm text-slate-300">Embed a lightweight React/iframe component into any FSM or support portal.</p>
-            </div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-sm font-semibold">API</div>
-              <p class="text-sm text-slate-300">Call endpoints from ticket workflows. Deterministic, versioned schemas.</p>
-            </div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-sm font-semibold">Webhooks</div>
-              <p class="text-sm text-slate-300">Send tickets → receive RCA + PDF automatically. Great for CMMS/IWMS.</p>
-            </div>
-            <div class="rounded-xl bg-slate-900 border border-slate-800 p-4">
-              <div class="text-sm font-semibold">Security</div>
-              <p class="text-sm text-slate-300">X‑Api‑Key, MIME allowlist, EXIF stripping, rate limits, presigned links.</p>
+            <div class="card">
+              <div class="card-title">3. Send the customer-ready summary</div>
+              <ul class="card-list">
+                <li>Tech reviews and edits</li>
+                <li>Consistent tone and structure</li>
+                <li>Stored for future tickets</li>
+              </ul>
             </div>
           </div>
         </div>
-        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6">
-          <div class="text-sm text-slate-300 mb-3">Example: Render a report</div>
-          <div class="rounded-xl bg-slate-950 border border-slate-800 p-4 text-xs overflow-auto">
-<pre><code>curl -X POST https://api.fieldsight.ai/v1/report \
-  -H "Content-Type: application/json" -H "X-Api-Key: $KEY" \
-  -d '{
-    "version": "2025-11-01",
-    "idempotency_key": "uuid",
-    "org": {"org_id": "partner-xyz"},
-    "source": {"type": "by_id", "result_id": "rca_001"},
-    "options": {"format": "pdf"},
-    "delivery": {"presign": {"ttl_seconds": 86400}}
-  }'
-</code></pre>
+
+        <div class="cta-panel">
+          <div class="section-label">Pilot Program</div>
+          <h3 class="section-title">Run FieldSight with your real tickets.</h3>
+          <p class="section-subtitle" style="margin-bottom: 0.8rem;">
+            A focused 4–6 week pilot with 20–50 tickets from your OEM support queue. We measure
+            time saved per ticket, reduction in escalations, and RCA consistency across techs.
+          </p>
+          <ul class="card-list">
+            <li>Configured for your equipment &amp; tone</li>
+            <li>10–20 support staff in the pilot</li>
+            <li>Bi-weekly check-ins, end-of-pilot summary</li>
+          </ul>
+          <div style="margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <a class="btn-primary" href="mailto:tre@fieldsight.tech?subject=FieldSight%20Pilot">
+              Schedule a 20-minute intro call →
+            </a>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+              Or email directly:
+              <span class="cta-email">tre@fieldsight.tech</span>
+            </div>
           </div>
-          <p class="mt-3 text-xs text-slate-400">Or send an inline RCA envelope to get a PDF link back.</p>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    </main>
 
-  <!-- Docs CTA -->
-  <section id="docs" class="py-20 border-t border-slate-900/60">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl sm:text-4xl font-extrabold">Developer‑ready from day one</h2>
-      <p class="mt-3 text-slate-300">Versioned JSON schemas, deterministic mode, and cURL examples for every endpoint.</p>
-      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="/docs" class="px-6 py-3 rounded-xl bg-white text-slate-900 font-semibold hover:bg-slate-200">Open API Docs</a>
-        <a href="#pilot" class="px-6 py-3 rounded-xl border border-slate-700 text-slate-200 hover:border-slate-500">Get Sandbox Credentials</a>
+    <footer>
+      <div class="footer-inner">
+        <span>© 2025 FieldSight. All rights reserved.</span>
+        <span>App: <a href="https://app.fieldsight.tech">app.fieldsight.tech</a></span>
       </div>
-    </div>
-  </section>
-
-  <!-- Pilot Program -->
-  <section id="pilot" class="py-20 border-t border-slate-900/60">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="rounded-2xl bg-gradient-to-br from-sky-600 to-violet-600 text-slate-950 p-8 shadow-xl">
-        <h2 class="text-3xl sm:text-4xl font-extrabold">30‑day Pilot Program</h2>
-        <ul class="mt-4 text-slate-900/90 space-y-2">
-          <li>✔️ Secure API key + sandbox namespace</li>
-          <li>✔️ 3–5 sample workflows (HVAC, plumbing, solar, electrical)</li>
-          <li>✔️ ESS dashboard & custom‑branded reports</li>
-          <li>✔️ 100 free RCA calls or equivalent credits</li>
-        </ul>
-        <form class="mt-6 grid sm:grid-cols-2 gap-3" onsubmit="event.preventDefault(); window.location.href='mailto:pilot@fieldsight.ai?subject=Pilot%20Request&body=Company%20name%3A%0D%0ARole%3A%0D%0AUse%20case%3A%0D%0AExpected%20volume%3A';">
-          <input type="text" required placeholder="Work email" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none"/>
-          <button type="submit" class="px-6 py-3 rounded-xl bg-slate-950 text-white font-semibold hover:bg-slate-900">Request Invite</button>
-        </form>
-        <p class="mt-3 text-sm">Prefer email? <a class="underline font-semibold" href="mailto:pilot@fieldsight.ai">pilot@fieldsight.ai</a></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="py-10 border-t border-slate-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-        <div class="flex items-center gap-2">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-sky-400"><path d="M12 3l7.794 4.5v9L12 21l-7.794-4.5v-9L12 3z" stroke="currentColor" stroke-width="1.5"/><path d="M12 7l5 3-5 3-5-3 5-3z" fill="currentColor" class="text-sky-500"/></svg>
-          <span class="font-bold">FieldSight AI</span>
-        </div>
-        <div class="text-sm text-slate-400">© <span id="year"></span> FieldSight AI — Deterministic AI for the field</div>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const btn = document.getElementById('menuBtn');
-    const mobile = document.getElementById('mobileNav');
-    btn?.addEventListener('click', () => mobile.classList.toggle('hidden'));
-  </script>
+    </footer>
+  </div>
 </body>
 </html>
